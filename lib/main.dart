@@ -127,34 +127,34 @@ class SpaceBackgroundPainter extends CustomPainter {
   final double animationValue;
   final Random random = Random();
   final List<Offset> stars = [];
+  final List<Asteroid> asteroids = [];
 
   SpaceBackgroundPainter(this.animationValue) {
-    // Generate random star positions when the painter is created
+    // Generate 100 random star positions when the painter is created
     for (int i = 0; i < 100; i++) {
       stars.add(Offset(random.nextDouble(), random.nextDouble()));
+    }
+
+    // Generate random asteroids
+    for (int i = 0; i < 5; i++) {
+      asteroids.add(Asteroid(
+        position: Offset(random.nextDouble(), random.nextDouble()),
+        speed: Offset(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1),
+        size: random.nextDouble() * 50 + 20,
+      ));
     }
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Draw the cosmic gradient background
-    final Rect rect = Offset.zero & size;
-    final Paint backgroundPaint = Paint()
-      ..shader = LinearGradient(
-        colors: [Colors.black, Colors.blueGrey.shade900, Colors.indigo.shade900],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(rect);
-    canvas.drawRect(rect, backgroundPaint);
-
-    // Draw planets (as circles)
-    _drawPlanet(canvas, size, const Offset(0.2, 0.7), 80, Colors.redAccent.withOpacity(0.5));
-    _drawPlanet(canvas, size, const Offset(0.8, 0.3), 100, Colors.blueAccent.withOpacity(0.3));
+    // Draw black background
+    canvas.drawRect(Offset.zero & size, Paint()..color = Colors.black);
 
     // Draw stars
     final Paint starPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;
+
     final double animationOffset = animationValue * size.height;
 
     for (var star in stars) {
@@ -169,26 +169,31 @@ class SpaceBackgroundPainter extends CustomPainter {
       canvas.drawCircle(Offset(starX, starY), 2, starPaint);
     }
 
-    // Draw shooting stars
-    _drawShootingStar(canvas, size, animationValue);
+    // Draw and animate asteroids
+    for (var asteroid in asteroids) {
+      _drawAsteroid(canvas, size, asteroid);
+    }
   }
 
-  void _drawPlanet(Canvas canvas, Size size, Offset position, double radius, Color color) {
-    final Paint planetPaint = Paint()..color = color;
-    final Offset center = Offset(position.dx * size.width, position.dy * size.height);
-    canvas.drawCircle(center, radius, planetPaint);
-  }
+  void _drawAsteroid(Canvas canvas, Size size, Asteroid asteroid) {
+    // Calculate the asteroid's new position
+    final double asteroidX = (asteroid.position.dx * size.width + asteroid.speed.dx * animationValue * size.width) % size.width;
+    final double asteroidY = (asteroid.position.dy * size.height + asteroid.speed.dy * animationValue * size.height) % size.height;
 
-  void _drawShootingStar(Canvas canvas, Size size, double animationValue) {
-    final Paint shootingStarPaint = Paint()..color = Colors.white.withOpacity(0.8);
-    final double starLength = 150.0;
-    final Offset startPosition = Offset(animationValue * size.width, animationValue * size.height / 2);
-    final Offset endPosition = startPosition + Offset(-starLength, starLength);
-    canvas.drawLine(startPosition, endPosition, shootingStarPaint..strokeWidth = 2);
+    final Paint asteroidPaint = Paint()..color = Colors.grey.withOpacity(0.8);
+    canvas.drawCircle(Offset(asteroidX, asteroidY), asteroid.size, asteroidPaint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Continually repaint to keep the animation running
   }
+}
+
+class Asteroid {
+  Offset position;
+  Offset speed;
+  double size;
+
+  Asteroid({required this.position, required this.speed, required this.size});
 }
