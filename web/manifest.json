@@ -1,6 +1,6 @@
 {
-    "name": "starbound",
-    "short_name": "starbound",
+    "name": "project_practice",
+    "short_name": "project_practice",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
