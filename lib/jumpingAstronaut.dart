@@ -5,7 +5,7 @@ class Jumpingastronaut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 70,
       height: 70,
       child: Image.asset('images/astronaut_jumping.png'),

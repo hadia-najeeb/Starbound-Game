@@ -8,12 +8,12 @@ class GameOver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return gameOver ? Container(
-      alignment: Alignment(0, 0),
+      alignment: const Alignment(0, 0),
       child: ElevatedButton(
           onPressed: () {
               Navigator.of(context).pop();
       },
-          child: Text('GAME OVER!', style: TextStyle(color: Colors.white, fontFamily: 'Silkscreen-Regular', fontSize: 80),),
+          child: const Text('GAME OVER!', style: TextStyle(color: Colors.white, fontFamily: 'Silkscreen-Regular', fontSize: 80),),
       ),
 
     ): Container();
